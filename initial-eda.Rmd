@@ -15,7 +15,16 @@ ec <- read_delim("data/Statistikdatabasen_2026-01-28 21_04_12.csv",
   
 ```
 
-# Overview
+```{r}
+ec_long <- ec %>% 
+  pivot_longer(cols = 2:56,
+               names_to = "year",
+               values_to = "count") %>% 
+  rename(region = Region)
+```
+
+
+# Selection Overview
 The `ec` table is pulled from [Socialstyrelsen Statistikdatabas för cancer](https://sdb.socialstyrelsen.se/if_can/val.aspx) with the following selections:
 
   + International incidence definition of morbidity IARC/IACR/ENCR
@@ -32,3 +41,16 @@ The `ec` table is pulled from [Socialstyrelsen Statistikdatabas för cancer](htt
     - 80+
   + Sex: women
   + Years: 1970-2024
+  
+# Summary Statistics
+```{r}
+ec_long %>% 
+  summary()
+```
+
+```{r}
+ec %>% 
+  ggplot(aes(x = )) +
+  geom_boxplot()
+```
+
