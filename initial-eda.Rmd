@@ -111,6 +111,15 @@ ec_long %>%
   geom_boxplot() +
   coord_flip()
 ```
+```{r}
+ec_long %>% 
+  filter(region != "Riket",
+         age == "age_all") %>%
+  filter((region %in% large_regions)) %>% 
+  ggplot(aes(region, incidence)) +
+  geom_boxplot() +
+  coord_flip()
+```
 
 
 ```{r}
@@ -154,7 +163,10 @@ ec_long %>%
   filter(region != "Riket",
          age == "age_all") %>% 
   filter(!(region %in% large_regions)) %>% 
-  ggplot(aes(year, incidence, color = region)) +
-  geom_point()
+  ggplot(aes(year, incidence)) +
+  geom_line() +
+  facet_wrap(vars(region))
 ```
+
+How can you group the counties together?
 
