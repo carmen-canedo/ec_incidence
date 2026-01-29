@@ -58,8 +58,9 @@ The `ec` table is pulled from [Socialstyrelsen Statistikdatabas för cancer](htt
   + Years: 1970-2024
   
 # Summary Statistics
+## Descriptive stats for all regions over all years
 ```{r}
-ec_long_summary <- ec_long %>% 
+summary_reg_yrs <- ec_long %>% 
   summarise(Minimum = min(incidence),
          Mean = mean(incidence),
          Median = median(incidence),
@@ -70,6 +71,22 @@ ec_long_summary <- ec_long %>%
   arrange(region)
 ```
 
+
+## Descriptive stats for all ages regardless of region
+```{r}
+summary_age_yrs <- ec_long %>% 
+  summarise(Minimum = min(incidence),
+         Mean = mean(incidence),
+         Median = median(incidence),
+         "Std. Deviation" = sd(incidence, na.rm = TRUE),
+         Variance = var(incidence, na.rm = TRUE),
+         Max = max(incidence),
+         .by = c(year, age)) %>% 
+  arrange(age)
+```
+
+
+## Descriptive stats for 
 ```{r}
 ec %>% 
   ggplot(aes(x = )) +
