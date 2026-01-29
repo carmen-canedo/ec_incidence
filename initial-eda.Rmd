@@ -1,7 +1,9 @@
 ---
 title: "EDA of Endometrial Cancer Incidence in Sweden 1970-2024"
 author: "Carmen Canedo"
-output: html_notebook
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ```{r, warning=FALSE, include=FALSE}
@@ -86,10 +88,73 @@ summary_age_yrs <- ec_long %>%
 ```
 
 
-## Descriptive stats for 
+# Boxplots
 ```{r}
-ec %>% 
-  ggplot(aes(x = )) +
-  geom_boxplot()
+ec_long %>% 
+  filter(region != "Riket",
+         age == "age_all") %>% 
+  ggplot(aes(region, incidence)) +
+  geom_boxplot() +
+  coord_flip()
+```
+
+```{r}
+large_regions <- c("Stockholms län", "Västra Götalands län", "Skåne län")
+```
+
+```{r}
+ec_long %>% 
+  filter(region != "Riket",
+         age == "age_all") %>%
+  filter(!(region %in% large_regions)) %>% 
+  ggplot(aes(region, incidence)) +
+  geom_boxplot() +
+  coord_flip()
+```
+
+
+```{r}
+ec_long %>% 
+  filter(region == "Riket",
+         age != "age_all") %>% 
+  ggplot(aes(age, incidence)) +
+  geom_boxplot() +
+  coord_flip()
+```
+
+
+# Scatterplots
+```{r}
+ec_long %>% 
+  filter(region != "Riket",
+         age == "age_all") %>% 
+  ggplot(aes(year, incidence, color = region)) +
+  geom_point()
+```
+
+```{r}
+ec_long %>% 
+  filter(region == "Riket",
+         age == "age_all") %>% 
+  filter(!(region %in% large_regions)) %>% 
+  ggplot(aes(year, incidence, color = region)) +
+  geom_line()
+```
+```{r}
+ec_long %>% 
+  filter(region %in% large_regions,
+         age == "age_all") %>% 
+  ggplot(aes(year, incidence, color = region)) +
+  geom_line()
+```
+
+
+```{r}
+ec_long %>% 
+  filter(region != "Riket",
+         age == "age_all") %>% 
+  filter(!(region %in% large_regions)) %>% 
+  ggplot(aes(year, incidence, color = region)) +
+  geom_point()
 ```
 
