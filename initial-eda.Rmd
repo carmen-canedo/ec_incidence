@@ -9,18 +9,33 @@ library(tidyverse)
 ```
 
 ```{r}
-ec <- read_delim("data/Statistikdatabasen_2026-01-28 21_04_12.csv",
+ec <- read_delim("data/Statistikdatabasen_2026-01-29 10_27_59.csv",
                # File automatically comes with header. Could be worth deleting manually later
-               skip = 1, delim = ";") 
+               skip = 1,
+               delim = ";") 
   
 ```
 
+# Cleaning
+```{r}
+ec <- ec %>% 
+  rename(year = År,
+         region = Region,
+         age_0_17 = 3,
+         age_18_29 = 4,
+         age_30_44 = 5,
+         age_45_64 = 6,
+         age_65_79 = 7,
+         age_80_plus = 8,
+         age_all = Totalt)
+```
+
+
 ```{r}
 ec_long <- ec %>% 
-  pivot_longer(cols = 2:56,
-               names_to = "year",
-               values_to = "count") %>% 
-  rename(region = Region)
+  pivot_longer(cols = starts_with("age_"),
+               names_to = "age",
+               values_to = "incidence")
 ```
 
 
@@ -32,7 +47,7 @@ The `ec` table is pulled from [Socialstyrelsen Statistikdatabas för cancer](htt
     - Note: ICD-10 is C54
   + Regardless of tumor type(s)
   + All regions, including Riket
-  + Older age groups:
+  + Older age groups (with ages shown separately):
     - 0-17
     - 18-29
     - 30-44
