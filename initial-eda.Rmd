@@ -59,8 +59,15 @@ The `ec` table is pulled from [Socialstyrelsen Statistikdatabas för cancer](htt
   
 # Summary Statistics
 ```{r}
-ec_long %>% 
-  summary()
+ec_long_summary <- ec_long %>% 
+  summarise(Minimum = min(incidence),
+         Mean = mean(incidence),
+         Median = median(incidence),
+         "Std. Deviation" = sd(incidence, na.rm = TRUE),
+         Variance = var(incidence, na.rm = TRUE),
+         Max = max(incidence),
+         .by = c(year, region)) %>% 
+  arrange(region)
 ```
 
 ```{r}
