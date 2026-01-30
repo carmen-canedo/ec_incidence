@@ -240,8 +240,12 @@ ec_long %>%
   filter(region == "Riket",
          age == "age_30_44") %>% 
   ggplot(aes(x = year, y = incidence)) +
-  geom_line() +
-  theme_light()
+  geom_point() +
+  geom_smooth() +
+  theme_light() +
+  labs(title = "Endometrial Cancer Incidence among Ages 30-44 in Sweden
+by Age Group from 1970-2024",
+       x = "Year", y = "Incidence")
 ```
 Interesting that there was a decline until early 2000s and now there's an increase.
 Is it significant?
