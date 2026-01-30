@@ -13,6 +13,7 @@ knitr::opts_chunk$set(eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE)
 
 ```{r, include=FALSE}
 library(tidyverse)
+library(kableExtra)
 ```
 
 ```{r}
@@ -63,7 +64,9 @@ The `ec` table is pulled from [Socialstyrelsen Statistikdatabas för cancer](htt
     - 80+
   + Sex: women
   + Years: 1970-2024
-  
+  + Measure: Antal nya cancerfall
+
+\new
 # Summary Statistics
 ## Descriptive stats for all regions over all years
 ```{r}
@@ -72,10 +75,18 @@ summary_reg_yrs <- ec_long %>%
          Mean = mean(incidence),
          Median = median(incidence),
          "Std. Deviation" = sd(incidence, na.rm = TRUE),
+         IQR = IQR(incidence, na.rm = TRUE),
          Variance = var(incidence, na.rm = TRUE),
          Max = max(incidence),
          .by = c(year, region)) %>% 
   arrange(region)
+```
+
+```{r}
+summary_reg_yrs %>% 
+  head() %>% 
+  kbl() %>% 
+  kable_classic()
 ```
 
 
@@ -86,10 +97,18 @@ summary_age_yrs <- ec_long %>%
          Mean = mean(incidence),
          Median = median(incidence),
          "Std. Deviation" = sd(incidence, na.rm = TRUE),
+         IQR = IQR(incidence, na.rm = TRUE),
          Variance = var(incidence, na.rm = TRUE),
          Max = max(incidence),
          .by = c(year, age)) %>% 
   arrange(age)
+```
+
+```{r}
+summary_age_yrs %>% 
+  head() %>% 
+  kbl() %>% 
+  kable_classic()
 ```
 
 
@@ -202,7 +221,7 @@ ec_long %>%
   geom_line() +
   facet_wrap(vars(region))    +
   theme_light() +
-  labs(title = "Endometrial Cancer Incidence in Sweden (except Skåne Län, Stockholms Län, 
+  labs(title = "Endometrial Cancer Incidence in Sweden (excluding Skåne Län, Stockholms Län, 
 Västra Götalands Län), and All Ages from 1970-2024",
        x = "Year", y = "Incidence")
 ```
@@ -248,4 +267,35 @@ by Age Group from 1970-2024",
        x = "Year", y = "Incidence")
 ```
 Interesting that there was a decline until early 2000s and now there's an increase.
-Is it significant?
+Is it significant, and how does it compare across other Nordic countries?
+How do mortality rates compare in this age range as well?
+
+```{r}
+ec_long %>% 
+  filter(age == "age_30_44",
+         region != "Riket",
+         region %in% large_regions) %>% 
+  ggplot(aes(year, incidence)) +
+  geom_line() +
+  theme_light() +
+  facet_wrap(vars(region)) +
+  labs(title = "Endometrial Cancer Incidence among Swedish Women Ages 30-44 in Skåne Län, 
+Stockholms Län, and Västra Götalands Län Regions from 1970-2024",
+      x = "Year", y = "Incidence")
+```
+
+
+```{r}
+ec_long %>% 
+  filter(age == "age_30_44",
+         region != "Riket",
+         !(region %in% large_regions)) %>% 
+  ggplot(aes(year, incidence)) +
+  geom_line() +
+  theme_light() +
+  facet_wrap(vars(region)) +
+  labs(title = "Endometrial Cancer Incidence among Swedish Women Ages 30-44 by Region
+(excluding Skåne Län, Stockholms Län, Västra Götalands Län)",
+      x = "Year", y = "Incidence")
+```
+
