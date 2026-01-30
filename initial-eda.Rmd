@@ -6,7 +6,12 @@ output:
   html_notebook: default
 ---
 
-```{r, warning=FALSE, include=FALSE}
+```{r setup, include=FALSE, eval=TRUE}
+knitr::opts_chunk$set(eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+
+```{r, include=FALSE}
 library(tidyverse)
 ```
 
@@ -18,8 +23,8 @@ ec <- read_delim("data/Statistikdatabasen_2026-01-29 10_27_59.csv",
   
 ```
 
-# Cleaning
 ```{r}
+# Cleaning
 ec <- ec %>% 
   rename(year = År,
          region = Region,
@@ -95,7 +100,11 @@ ec_long %>%
          age == "age_all") %>% 
   ggplot(aes(region, incidence)) +
   geom_boxplot() +
-  coord_flip()
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Endometrial Cancer Incidence in Sweden from 1970-2024
+by Region",
+       x = "Region", y = "Incidence")
 ```
 
 ```{r}
@@ -109,7 +118,11 @@ ec_long %>%
   filter(!(region %in% large_regions)) %>% 
   ggplot(aes(region, incidence)) +
   geom_boxplot() +
-  coord_flip()
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Endometrial Cancer Incidence in Sweden from 1970-2024
+by Region (except Stockholms Län, Västra Götalands Län, Skåne Län)",
+       x = "Region", y = "Incidence")
 ```
 ```{r}
 ec_long %>% 
@@ -118,7 +131,11 @@ ec_long %>%
   filter((region %in% large_regions)) %>% 
   ggplot(aes(region, incidence)) +
   geom_boxplot() +
-  coord_flip()
+  coord_flip() +
+  theme_minimal()  +
+  labs(title = "Endometrial Cancer Incidence in Sweden from 1970-2024 in
+Stockholms Län, Västra Götalands Län, Skåne Län Regions",
+       x = "Region", y = "Incidence")
 ```
 
 
@@ -128,33 +145,51 @@ ec_long %>%
          age != "age_all") %>% 
   ggplot(aes(age, incidence)) +
   geom_boxplot() +
-  coord_flip()
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Endometrial Cancer Incidence in Sweden from 1970-2024 by Age Group",
+       x = "Region", y = "Incidence")
 ```
-
-
-# Scatterplots
 ```{r}
+younger_groups <- c("age_0_17", "age_18_29", "age_30_44")
+
 ec_long %>% 
-  filter(region != "Riket",
-         age == "age_all") %>% 
-  ggplot(aes(year, incidence, color = region)) +
-  geom_point()
+  filter(region == "Riket",
+         age %in% younger_groups) %>% 
+  ggplot(aes(age, incidence)) +
+  geom_boxplot() +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Endometrial Cancer Incidence in Sweden from 1970-2024
+by Age Groups 0-17, 18-29, 30-44",
+       x = "Region", y = "Incidence")
 ```
+
+
+# Incidence over time
 
 ```{r}
 ec_long %>% 
   filter(region == "Riket",
          age == "age_all") %>% 
   filter(!(region %in% large_regions)) %>% 
-  ggplot(aes(year, incidence, color = region)) +
-  geom_line()
+  ggplot(aes(year, incidence)) +
+  geom_line()  +
+  theme_light() +
+  labs(title = "Endometrial Cancer Incidence in Sweden across All Regions and Ages
+from 1970-2024",
+       x = "Year", y = "Incidence")
 ```
 ```{r}
 ec_long %>% 
   filter(region %in% large_regions,
          age == "age_all") %>% 
   ggplot(aes(year, incidence, color = region)) +
-  geom_line()
+  geom_line()   +
+  theme_light() +
+  labs(title = "Endometrial Cancer Incidence in Sweden in Skåne Län, Stockholms Län, 
+Västra Götalands Län, and All Ages from 1970-2024",
+       x = "Year", y = "Incidence")
 ```
 
 
@@ -165,8 +200,48 @@ ec_long %>%
   filter(!(region %in% large_regions)) %>% 
   ggplot(aes(year, incidence)) +
   geom_line() +
-  facet_wrap(vars(region))
+  facet_wrap(vars(region))    +
+  theme_light() +
+  labs(title = "Endometrial Cancer Incidence in Sweden (except Skåne Län, Stockholms Län, 
+Västra Götalands Län), and All Ages from 1970-2024",
+       x = "Year", y = "Incidence")
 ```
 
-How can you group the counties together?
+How can you group the counties together other than alphabetically as done here?
+Is there a way to show counties that border each other and do some sort of cluster analysis?
 
+```{r}
+ec_long %>% 
+  filter(region == "Riket",
+         !(age %in% younger_groups)) %>% 
+  ggplot(aes(year, incidence)) +
+  geom_line() +
+  facet_wrap(vars(age)) +
+  theme_light() +
+  labs(title = "Endometrial Cancer Incidence in Sweden by Age Group from 1970-2024",
+       x = "Year", y = "Incidence")
+```
+
+```{r}
+ec_long %>% 
+  filter(region == "Riket",
+         (age %in% younger_groups)) %>% 
+  ggplot(aes(year, incidence)) +
+  geom_line() +
+  facet_wrap(vars(age)) +
+  theme_light() +
+  labs(title = "Endometrial Cancer Incidence among Ages 0-44 in Sweden
+by Age Group from 1970-2024",
+       x = "Year", y = "Incidence")
+```
+
+```{r}
+ec_long %>% 
+  filter(region == "Riket",
+         age == "age_30_44") %>% 
+  ggplot(aes(x = year, y = incidence)) +
+  geom_line() +
+  theme_light()
+```
+Interesting that there was a decline until early 2000s and now there's an increase.
+Is it significant?
